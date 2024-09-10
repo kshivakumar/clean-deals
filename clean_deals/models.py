@@ -36,10 +36,16 @@ class ProjectDeal(models.Model):
 
     class Meta:
         constraints = [
+            models.UniqueConstraint(
+                fields=["deal", "project"], name="unique_deal_project"
+            ),
             models.CheckConstraint(
                 check=models.Q(transfer_rate__range=[0, 1]), name="transfer_rate_limits"
             ),
         ]
+
+    def __str__(self):
+        return f"{str(self.project)} / {str(self.deal)}"
 
     @property
     def tax_credit_transfer_amount(self):
