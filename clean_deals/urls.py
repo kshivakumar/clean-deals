@@ -15,4 +15,5 @@ urlpatterns = [
         withdraw_project,
         name="withdraw-project",
     ),
+    path("api-auth/", include("rest_framework.urls")),
 ]

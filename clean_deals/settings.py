@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "rest_framework.authtoken",
     "clean_deals",
 ]
 
@@ -39,6 +40,8 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+AUTH_USER_MODEL = "clean_deals.User"
 
 ROOT_URLCONF = "clean_deals.urls"
 
@@ -68,7 +71,17 @@ DATABASES = {
     }
 }
 
-REST_FRAMEWORK = {"TEST_REQUEST_DEFAULT_FORMAT": "json"}
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+    "TEST_REQUEST_DEFAULT_FORMAT": "json",
+}
 
 
 LANGUAGE_CODE = "en-us"

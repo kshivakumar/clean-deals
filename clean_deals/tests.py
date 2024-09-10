@@ -1,12 +1,35 @@
 from django.urls import reverse
-from rest_framework.test import APITestCase
+from django.contrib.auth import get_user_model
 from rest_framework import status
+from rest_framework.authtoken.models import Token
+from rest_framework.test import APITestCase, APIClient
 
 from clean_deals.models import Project, Deal, ProjectDeal
 from clean_deals.views import DealViewSet
 
 
-class TestProjectView(APITestCase):
+USERNAME = "test-user"
+PASSWORD = "test-user"
+TOKEN = None
+
+
+def setUpModule():
+    global User, user, TOKEN
+    User = get_user_model()
+    user = get_user_model().objects.create_user(
+        username=USERNAME, password=PASSWORD, email="user@example.com"
+    )
+    token, _ = Token.objects.get_or_create(user=user)
+    TOKEN = token.key
+
+
+class AuthedAPITestCase(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + TOKEN)
+
+
+class TestProjectView(AuthedAPITestCase):
 
     def test_create_project(self):
         response = self.client.post(
@@ -28,7 +51,7 @@ class TestProjectView(APITestCase):
         self.assertEqual(len(response.data), 2)
 
 
-class TestDealView(APITestCase):
+class TestDealView(AuthedAPITestCase):
 
     def test_create_deal_with_projects(self):
         p1 = Project.objects.create(name="P1", fair_market_value=750)
@@ -82,7 +105,7 @@ class TestDealView(APITestCase):
         self.assertEqual("action `destroy` not handled", str(ctx.exception))
 
 
-class TestProjectInduction(APITestCase):
+class TestProjectInduction(AuthedAPITestCase):
 
     def test_induct_project(self):
         deal = Deal.objects.create(name="Deal555")
@@ -132,7 +155,7 @@ class TestProjectInduction(APITestCase):
         self.assertEqual(ProjectDeal.objects.count(), 0)
 
 
-class TestProjectWithdrawal(APITestCase):
+class TestProjectWithdrawal(AuthedAPITestCase):
 
     def test_withdraw_project(self):
         deal = Deal.objects.create(name="Chota Deal")

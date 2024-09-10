@@ -1,22 +1,25 @@
 import random
 
-from django.core.management.base import BaseCommand
 from django.db import transaction
+from django.core.management.base import BaseCommand
+from django.contrib.auth import get_user_model
 
 from clean_deals.models import Project, Deal, ProjectDeal
 
 
-class Command(BaseCommand):
-    help = "Generates sample data"
+NUM_PROJECTS = 50
 
-    def add_arguments(self, parser):
-        parser.add_argument(
-            "--num_projects", type=int, default=50, help="No. of projects to create"
-        )
+
+class Command(BaseCommand):
+    help = "Generates sample data and test user, should be executed only once"
 
     def handle(self, *args, **options):
+        self.create_test_user()
+        self.gen_sample_data()
+
+    def gen_sample_data(self):
         with transaction.atomic():
-            projects = self.gen_projects(options["num_projects"])
+            projects = self.gen_projects(NUM_PROJECTS)
             self.gen_deals_and_project_deals(projects)
         self.stdout.write(
             f"Successfully generated sample data for {len(projects)} projects!"
@@ -41,3 +44,14 @@ class Command(BaseCommand):
                 ProjectDeal.objects.create(
                     project=project, deal=deal, transfer_rate=random.uniform(0, 1)
                 )
+
+    def create_test_user(self):
+        username = password = "test"
+        user = get_user_model().objects.create_superuser(
+            username=username,
+            password=password,
+            email="hello@example.com",
+        )
+        self.stdout.write(
+            f"Successfully created a test user with credentials, username: {username}, password: {password}, token: {user.auth_token.key}"
+        )

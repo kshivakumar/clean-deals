@@ -1,8 +1,14 @@
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, mixins, viewsets, status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import (
+    api_view,
+    authentication_classes,
+    permission_classes,
+)
 from rest_framework.response import Response
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 from .models import Deal, Project, ProjectDeal
 from .serializers import (
@@ -17,6 +23,8 @@ from .serializers import (
 class ProjectView(generics.ListCreateAPIView):
     serializer_class = ProjectSerializer
     queryset = Project.objects.all()
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
 
 class DealViewSet(
@@ -25,6 +33,8 @@ class DealViewSet(
     mixins.RetrieveModelMixin,
     viewsets.GenericViewSet,
 ):
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -61,6 +71,8 @@ class DealViewSet(
 
 
 @api_view(["POST"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def induct_project(request, deal_id):
     deserializer = ProjectDealCreateSerializer(
         data={
@@ -79,6 +91,8 @@ def induct_project(request, deal_id):
 
 
 @api_view(["DELETE"])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def withdraw_project(request, deal_id, project_id):
     pd = get_object_or_404(ProjectDeal, deal_id=deal_id, project_id=project_id)
     pd.delete()
