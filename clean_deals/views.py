@@ -33,7 +33,7 @@ class DealViewSet(
             return DealDetailSerializer
         if self.action == "create":
             return DealCreateSerializer
-        raise NotImplementedError()
+        raise NotImplementedError(f"action `{self.action}` not handled")
 
     def get_queryset(self):
         queryset = Deal.objects.all()
@@ -73,7 +73,9 @@ def induct_project(request, deal_id):
         deserializer.save()
         return Response(status=status.HTTP_201_CREATED)
     else:
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            status=status.HTTP_400_BAD_REQUEST, data={"errors": [deserializer.errors]}
+        )
 
 
 @api_view(["DELETE"])
