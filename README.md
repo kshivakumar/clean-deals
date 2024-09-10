@@ -1,7 +1,16 @@
 # Notes
 - I intentionally used a simplified project/folder layout for readability. Typically, I use [DRF-style](https://www.django-rest-framework.org/tutorial/quickstart/) layout for actual projects.
-- This installation steps are mostly copied from one of my personal projects, [notes-api](https://github.com/kshivakumar/notes-api).
+- The installation steps are mostly copied from one of my personal projects, [notes-api](https://github.com/kshivakumar/notes-api).
 - I used Claude.ai chat to cross-check my understanding of the specs, all the code is written by myself.
+
+# Technology Stack:
+**Backend**: Python, Django, [Django Rest Framework (DRF)](https://www.django-rest-framework.org/), [Gunicorn](https://docs.gunicorn.org/en/stable/)  
+**Database**: SQLite 
+
+## Dev Tools/Environment
+- **IDE**: VS Code
+- **Code formatting**: [black](https://black.readthedocs.io/en/stable/)
+- **OS**: MacOS
 
 # Local Setup
 
@@ -45,12 +54,3 @@ Access the api endpoint at http://localhost:8000/
 `docker exec clean_deals_api python manage.py create_sample_data`  
 
 Access the api endpoint at http://localhost:8000/
-
-# Technology Stack:
-**Backend**: Python, Django, [Django Rest Framework (DRF)](https://www.django-rest-framework.org/), [Gunicorn](https://docs.gunicorn.org/en/stable/)  
-**Database**: PostgreSQL 
-
-## Dev Tools/Environment
-- **IDE**: VS Code
-- **Code formatting**: [black](https://black.readthedocs.io/en/stable/)
-- **OS**: MacOS
