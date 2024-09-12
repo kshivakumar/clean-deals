@@ -13,7 +13,17 @@ NUM_PROJECTS = 50
 class Command(BaseCommand):
     help = "Generates sample data and test user, should be executed only once"
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--run-only-if-no-users",
+            action="store_true",
+            help="Run in dry-run mode without making changes",
+        )
+
     def handle(self, *args, **options):
+        if options.get("run_only_if_no_users") and get_user_model().objects.exists():
+            return
+
         self.create_test_user()
         self.gen_sample_data()
 

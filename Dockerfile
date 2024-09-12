@@ -10,12 +10,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY ./clean_deals /app/clean_deals
 COPY ./manage.py /app/
-COPY ./start.sh /app/
 
 RUN mkdir /app/staticfiles
 
-RUN chmod +x /app/start.sh
-
 EXPOSE 8000
 
-CMD ["/app/start.sh"]
+CMD python manage.py migrate && \
+    python manage.py collectstatic --noinput && \
+    gunicorn --workers 3 --preload --bind 0.0.0.0:8000 --access-logfile - clean_deals.wsgi:application
