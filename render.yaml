@@ -6,5 +6,5 @@ services:
     buildCommand: "./build.sh"
     startCommand: "python -m gunicorn --preload clean_deals.wsgi:application"
     envVars:
-      - key: SECRET_KEY
+      - key: DJANGO_SECRET_KEY
         generateValue: true
